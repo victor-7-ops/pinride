@@ -6,6 +6,7 @@
   <title>PinRide — Driver</title>
   <meta name="description" content="Scan a passenger's QR code to open their destination in Google Maps or Waze." />
   <meta name="theme-color" content="#F97316" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://*.tile.openstreetmap.org; worker-src 'self'; media-src 'self';" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,6 +17,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="driver-body">
+  <a href="#main-content" class="skip-nav">Skip to main content</a>
   <div id="offline-banner" class="offline-banner" hidden>
     You're offline. The map needs data to load; navigation uses your map app.
   </div>
@@ -28,7 +30,7 @@
     <span class="role-tag">Driver</span>
   </header>
 
-  <main class="driver-main">
+  <main class="driver-main" id="main-content">
     <div id="scan-stage" class="scan-stage">
       <p class="driver-lede">Scan the passenger's QR code to open their exact destination.</p>
       <button id="scan-btn" class="primary-btn big-btn" type="button">📷 Scan Passenger QR</button>
@@ -43,9 +45,9 @@
             spellcheck="false" placeholder="e.g. w3gv2xm9q" aria-label="9-character destination code" />
           <button id="typed-code-go" class="primary-btn" type="button">Go</button>
         </div>
-        <p id="typed-code-error" class="typed-code-error" hidden></p>
+        <p id="typed-code-error" class="typed-code-error" hidden aria-live="polite" aria-atomic="true"></p>
       </div>
-      <p id="scan-error" class="scan-error" hidden></p>
+      <p id="scan-error" class="scan-error" hidden aria-live="assertive" aria-atomic="true"></p>
     </div>
 
     <div id="result-stage" class="result-stage" hidden>
@@ -53,8 +55,8 @@
       <h2 id="dest-name" class="dest-name">—</h2>
       <p id="dest-coords" class="coords">—</p>
       <div id="preview-map" class="preview-map"></div>
-      <a id="gmaps-btn" class="primary-btn big-btn" target="_blank" rel="noopener">🗺️ Open in Google Maps</a>
-      <a id="waze-btn" class="secondary-btn big-btn" target="_blank" rel="noopener">🚗 Open in Waze</a>
+      <a id="gmaps-btn" class="primary-btn big-btn" target="_blank" rel="noopener noreferrer">🗺️ Open in Google Maps</a>
+      <a id="waze-btn" class="secondary-btn big-btn" target="_blank" rel="noopener noreferrer">🚗 Open in Waze</a>
       <button id="scan-again" class="text-btn" type="button">Scan another</button>
     </div>
   </main>
@@ -66,7 +68,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
+    integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+" crossorigin="anonymous"></script>
   <script src="js/geohash.js?v=2"></script>
   <script src="js/driver.js?v=2"></script>
   <script>

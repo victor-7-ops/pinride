@@ -6,6 +6,7 @@
   <title>PinRide — Pin Your Taxi Destination</title>
   <meta name="description" content="Pin your destination on a map and share it with your taxi driver via a QR code. Built in Cebu City." />
   <meta name="theme-color" content="#F97316" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org; worker-src 'self';" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,6 +17,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <a href="#main-content" class="skip-nav">Skip to main content</a>
   <div id="offline-banner" class="offline-banner" hidden>
     You're offline. The map needs data to load; navigation uses your map app.
   </div>
@@ -28,7 +30,7 @@
     <span class="role-tag">Passenger</span>
   </header>
 
-  <main class="passenger-main">
+  <main class="passenger-main" id="main-content">
     <p class="lede">Pin where you want to go, then show the QR code to your driver. No typing, no explaining.</p>
 
     <div class="search-row">
@@ -37,7 +39,7 @@
       <button id="voice-btn" class="icon-btn" type="button" title="Voice search" aria-label="Voice search" hidden>🎤</button>
       <button id="search-btn" class="icon-btn" type="button" title="Search" aria-label="Search">🔍</button>
     </div>
-    <ul id="search-results" class="search-results" hidden></ul>
+    <ul id="search-results" class="search-results" hidden aria-live="polite" aria-label="Search results"></ul>
 
     <div class="chips" id="landmark-chips" aria-label="Common Cebu landmarks"></div>
 
@@ -87,7 +89,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"
+    integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
   <script src="js/geohash.js?v=2"></script>
   <script src="js/passenger.js?v=2"></script>
   <script>

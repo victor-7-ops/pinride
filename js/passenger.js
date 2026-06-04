@@ -177,6 +177,13 @@ function generateQR() {
   const code = encode(selected.lat, selected.lng, 9);
   document.getElementById('qr-code-value').textContent = code;
   document.getElementById('qr-code-row').hidden = false;
+  // Move focus into modal for keyboard/screen reader users
+  document.getElementById('qr-close').focus();
+}
+
+function closeQRModal() {
+  document.getElementById('qr-modal').hidden = true;
+  document.getElementById('generate-btn').focus();
 }
 
 function downloadQR() {
@@ -271,11 +278,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('generate-btn').addEventListener('click', generateQR);
   document.getElementById('download-btn').addEventListener('click', downloadQR);
-  document.getElementById('qr-close').addEventListener('click', () => {
-    document.getElementById('qr-modal').hidden = true;
-  });
+  document.getElementById('qr-close').addEventListener('click', closeQRModal);
   document.getElementById('qr-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'qr-modal') document.getElementById('qr-modal').hidden = true;
+    if (e.target.id === 'qr-modal') closeQRModal();
+  });
+  document.getElementById('qr-modal').addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeQRModal();
   });
   document.getElementById('copy-code-btn').addEventListener('click', copyCode);
   document.querySelector('.dismiss-note').addEventListener('click', () => {
