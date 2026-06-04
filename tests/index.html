@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PinRide Tests</title>
+  <style>
+    body { font-family: monospace; padding: 24px; background: #0f172a; color: #e2e8f0; }
+    h1 { color: #f97316; }
+    table { border-collapse: collapse; width: 100%; margin-top: 16px; }
+    th { text-align: left; padding: 8px 12px; background: #1e293b; }
+    td { padding: 8px 12px; border-top: 1px solid #334155; }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; font-weight: bold; }
+    #summary { margin-top: 16px; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <h1>PinRide — Tests</h1>
+  <table>
+    <thead><tr><th>Test</th><th>Result</th><th>Detail</th></tr></thead>
+    <tbody id="results"></tbody>
+  </table>
+  <p id="summary"></p>
+
+  <script src="../js/geohash.js"></script>
+  <script>
+    'use strict';
+
+    const tbody = document.getElementById('results');
+    let passed = 0, failed = 0;
+
+    function assert(name, condition, detail = '') {
+      const tr = document.createElement('tr');
+      const ok = !!condition;
+      if (ok) passed++; else failed++;
+      tr.innerHTML = `<td>${name}</td><td class="${ok ? 'pass' : 'fail'}">${ok ? 'PASS' : 'FAIL'}</td><td>${detail}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    // ---- geohash round-trip tests ----
+    (() => {
+      const cases = [
+        { name: 'SM City Cebu', lat: 10.311, lng: 123.918 },
+        { name: 'Mactan Airport', lat: 10.3075, lng: 123.9794 },
+        { name: 'Colon Street', lat: 10.2966, lng: 123.9000 },
+      ];
+      cases.forEach(({ name, lat, lng }) => {
+        const hash = encode(lat, lng, 9);
+        const { lat: dLat, lng: dLng, error } = decode(hash);
+        const latOk = Math.abs(dLat - lat) <= error.lat + 1e-9;
+        const lngOk = Math.abs(dLng - lng) <= error.lng + 1e-9;
+        assert(
+          `geohash round-trip: ${name}`,
+          latOk && lngOk,
+          `hash=${hash} dLat=${dLat.toFixed(7)} dLng=${dLng.toFixed(7)}`
+        );
+        assert(
+          `geohash length=9: ${name}`,
+          hash.length === 9,
+          `got length ${hash.length}`
+        );
+      });
+    })();
+
+    (() => {
+      // isValidGeohash9
+      assert('isValidGeohash9: valid hash', isValidGeohash9('w3gv2xm9q'), '');
+      assert('isValidGeohash9: too short', !isValidGeohash9('w3gv2xm'), '');
+      assert('isValidGeohash9: invalid char (a)', !isValidGeohash9('w3gv2xmaa'), '');
+      assert('isValidGeohash9: empty string', !isValidGeohash9(''), '');
+      assert('isValidGeohash9: non-string', !isValidGeohash9(null), '');
+    })();
+
+    // ---- parsePayload tests (inline — matches driver.js logic after Task 3) ----
+    function parsePayload(raw) {
+      const parts = raw.split('|');
+      if (parts.length < 4) return null;
+      if (parts[0] !== 'PINRIDE1') return null;
+      const lat = parseFloat(parts[1]);
+      const lng = parseFloat(parts[2]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      if (lat < 4 || lat > 21 || lng < 116 || lng > 127) return null;
+      const name = parts.slice(3).join('|').trim().slice(0, 80) || 'Scanned destination';
+      return { lat, lng, name };
+    }
+
+    (() => {
+      const valid = parsePayload('PINRIDE1|10.311|123.918|SM City Cebu');
+      assert('parsePayload: valid', valid !== null && valid.lat === 10.311 && valid.name === 'SM City Cebu', JSON.stringify(valid));
+
+      const pipeInName = parsePayload('PINRIDE1|10.311|123.918|Foo|Bar Baz');
+      assert('parsePayload: pipe in name', pipeInName !== null && pipeInName.name === 'Foo|Bar Baz', JSON.stringify(pipeInName));
+
+      assert('parsePayload: missing prefix', parsePayload('10.311|123.918|SM City Cebu') === null, '');
+      assert('parsePayload: wrong prefix', parsePayload('PINRIDE2|10.311|123.918|SM') === null, '');
+      assert('parsePayload: bad lat (NaN)', parsePayload('PINRIDE1|abc|123.918|SM') === null, '');
+      assert('parsePayload: out of PH bbox', parsePayload('PINRIDE1|51.5|0.1|London') === null, '');
+      assert('parsePayload: too few parts', parsePayload('PINRIDE1|10.311') === null, '');
+
+      const longName = parsePayload('PINRIDE1|10.311|123.918|' + 'x'.repeat(100));
+      assert('parsePayload: name capped at 80', longName !== null && longName.name.length === 80, `len=${longName?.name.length}`);
+    })();
+
+    document.getElementById('summary').textContent =
+      `${passed + failed} tests — ${passed} passed, ${failed} failed.`;
+    document.getElementById('summary').style.color = failed === 0 ? '#4ade80' : '#f87171';
+  </script>
+</body>
+</html>

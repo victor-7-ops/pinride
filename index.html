@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PinRide — Pin Your Taxi Destination</title>
+  <meta name="description" content="Pin your destination on a map and share it with your taxi driver via a QR code. Built in Cebu City." />
+  <meta name="theme-color" content="#F97316" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="offline-banner" class="offline-banner" hidden>
+    You're offline. The map needs data to load; navigation uses your map app.
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-pin" aria-hidden="true">📍</span>
+      <h1>PinRide</h1>
+    </div>
+    <span class="role-tag">Passenger</span>
+  </header>
+
+  <main class="passenger-main">
+    <p class="lede">Pin where you want to go, then show the QR code to your driver. No typing, no explaining.</p>
+
+    <div class="search-row">
+      <input id="search-input" type="text" inputmode="search" autocomplete="off"
+        placeholder="Search a place in Cebu…" aria-label="Search for a destination" />
+      <button id="voice-btn" class="icon-btn" type="button" title="Voice search" aria-label="Voice search" hidden>🎤</button>
+      <button id="search-btn" class="icon-btn" type="button" title="Search" aria-label="Search">🔍</button>
+    </div>
+    <ul id="search-results" class="search-results" hidden></ul>
+
+    <div class="chips" id="landmark-chips" aria-label="Common Cebu landmarks"></div>
+
+    <div id="map" role="application" aria-label="Map of Cebu City. Tap to drop a destination pin.">
+      <div id="map-offline-overlay" class="map-offline-overlay" hidden>
+        Map tiles need internet to load. You can still drop a pin at the last known location.
+      </div>
+    </div>
+
+    <div id="selected-card" class="selected-card" hidden>
+      <div class="selected-info">
+        <strong id="selected-name">—</strong>
+        <span id="selected-coords" class="coords">—</span>
+      </div>
+    </div>
+    <div id="out-of-cebu-note" class="out-of-cebu-note" hidden>
+      That looks outside Cebu City — still okay to use.
+      <button class="dismiss-note" type="button" aria-label="Dismiss">✕</button>
+    </div>
+
+    <button id="generate-btn" class="primary-btn" type="button" disabled>Generate QR</button>
+  </main>
+
+  <footer class="app-footer">
+    <a href="driver.html" class="role-link">I am a Driver →</a>
+    <p class="tagline">PinRide — Share your taxi destination with a QR code. Built in Cebu City.</p>
+  </footer>
+
+  <!-- QR Modal -->
+  <div id="qr-modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="qr-title">
+      <button id="qr-close" class="modal-close" type="button" aria-label="Close">✕</button>
+      <h2 id="qr-title">Show this to your driver</h2>
+      <p id="qr-dest" class="qr-dest">—</p>
+      <div id="qr-canvas" class="qr-canvas"></div>
+      <p class="brightness-hint">Tip: turn your screen brightness up for easier scanning.</p>
+      <div id="qr-code-row" class="qr-code-row" hidden>
+        <span class="qr-code-label">Code:</span>
+        <span id="qr-code-value" class="qr-code-value"></span>
+        <button id="copy-code-btn" class="copy-code-btn" type="button">Copy</button>
+      </div>
+      <p class="qr-code-hint">No scanner? Read out this code to your driver.</p>
+      <p class="qr-hint">The driver scans it from the Driver page to open the route in their map app.</p>
+      <button id="download-btn" class="secondary-btn" type="button">Download QR</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="js/geohash.js?v=2"></script>
+  <script src="js/passenger.js?v=2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
+    }
+  </script>
+</body>
+</html>

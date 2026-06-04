@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PinRide — Driver</title>
+  <meta name="description" content="Scan a passenger's QR code to open their destination in Google Maps or Waze." />
+  <meta name="theme-color" content="#F97316" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="driver-body">
+  <div id="offline-banner" class="offline-banner" hidden>
+    You're offline. The map needs data to load; navigation uses your map app.
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-pin" aria-hidden="true">📍</span>
+      <h1>PinRide</h1>
+    </div>
+    <span class="role-tag">Driver</span>
+  </header>
+
+  <main class="driver-main">
+    <div id="scan-stage" class="scan-stage">
+      <p class="driver-lede">Scan the passenger's QR code to open their exact destination.</p>
+      <button id="scan-btn" class="primary-btn big-btn" type="button">📷 Scan Passenger QR</button>
+      <div id="reader" class="reader" hidden></div>
+      <button id="torch-btn" class="secondary-btn" type="button" hidden>🔦 Torch</button>
+      <button id="cancel-scan" class="secondary-btn" type="button" hidden>Cancel</button>
+      <div id="typed-code-row" class="typed-code-row">
+        <button id="show-typed-btn" class="text-btn" type="button">Can't scan? Type the code instead →</button>
+        <div id="typed-code-input-wrap" class="typed-code-input-wrap" hidden>
+          <input id="typed-code-input" class="typed-code-input" type="text"
+            inputmode="text" maxlength="9" autocorrect="off" autocapitalize="none"
+            spellcheck="false" placeholder="e.g. w3gv2xm9q" aria-label="9-character destination code" />
+          <button id="typed-code-go" class="primary-btn" type="button">Go</button>
+        </div>
+        <p id="typed-code-error" class="typed-code-error" hidden></p>
+      </div>
+      <p id="scan-error" class="scan-error" hidden></p>
+    </div>
+
+    <div id="result-stage" class="result-stage" hidden>
+      <p class="result-label">Destination</p>
+      <h2 id="dest-name" class="dest-name">—</h2>
+      <p id="dest-coords" class="coords">—</p>
+      <div id="preview-map" class="preview-map"></div>
+      <a id="gmaps-btn" class="primary-btn big-btn" target="_blank" rel="noopener">🗺️ Open in Google Maps</a>
+      <a id="waze-btn" class="secondary-btn big-btn" target="_blank" rel="noopener">🚗 Open in Waze</a>
+      <button id="scan-again" class="text-btn" type="button">Scan another</button>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <a href="index.html" class="role-link">← I am a Passenger</a>
+    <p class="tagline">PinRide — Share your taxi destination with a QR code. Built in Cebu City.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="js/geohash.js?v=2"></script>
+  <script src="js/driver.js?v=2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
+    }
+  </script>
+</body>
+</html>
