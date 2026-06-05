@@ -261,6 +261,7 @@ h1, h2 { margin: 0; }
   white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
   box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
 }
 .chip:hover { border-color: var(--orange-border); color: var(--orange-dark); background: var(--orange-light); }
 .chip:active { background: var(--orange); color: #fff; border-color: var(--orange); box-shadow: var(--shadow-btn); }
@@ -272,8 +273,15 @@ h1, h2 { margin: 0; }
   border: 1.5px solid var(--border);
   z-index: 1;
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  /* overflow: hidden removed — it clips Leaflet marker icons near map edges.
+     Clip only the tile/shadow layers so markers can overflow freely. */
   position: relative;
+}
+/* Clip tiles & overlays to border-radius without touching marker pane */
+#map .leaflet-tile-pane,
+#map .leaflet-shadow-pane,
+#map .leaflet-overlay-pane {
+  clip-path: inset(0 round var(--radius));
 }
 
 /* ── Selected destination card ─────────────────────────── */
@@ -326,6 +334,7 @@ h1, h2 { margin: 0; }
   letter-spacing: -.01em;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 .primary-btn:hover { background: var(--orange-dark); }
 .primary-btn:active { background: var(--orange-dark); transform: scale(.98); box-shadow: 0 2px 8px rgba(249,115,22,.3); }
@@ -351,6 +360,7 @@ h1, h2 { margin: 0; }
   transition: background .12s, border-color .12s, transform .08s;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 .secondary-btn:hover { background: var(--bg); border-color: var(--muted-lt); }
 .secondary-btn:active { background: var(--bg); transform: scale(.98); }
@@ -416,6 +426,7 @@ h1, h2 { margin: 0; }
   position: relative;
   box-shadow: var(--shadow-lg);
   animation: sheet-in .28s cubic-bezier(.32,.72,0,1);
+  overscroll-behavior: contain;
 }
 @keyframes sheet-in {
   from { transform: translateY(100%); }
@@ -715,3 +726,16 @@ h1, h2 { margin: 0; }
 .offline-main p { color: #94A3B8; line-height: 1.55; margin: 0; max-width: 320px; font-size: .9rem; }
 .offline-note { font-size: .8rem; color: #475569; }
 .offline-main .primary-btn { margin-top: 8px; padding: 0 28px; }
+
+/* ── Safe area insets ──────────────────────────────────── */
+.app-footer {
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+}
+
+/* ── Reduced motion ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .modal { animation: none; }
+  .modal-card { animation: none; }
+  .icon-btn.listening { animation: none; }
+  .primary-btn, .secondary-btn, .chip { transition: none; }
+}
