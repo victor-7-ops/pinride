@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PinRide — Driver</title>
   <meta name="description" content="Scan a passenger's QR code to open their destination in Google Maps or Waze." />
-  <meta name="theme-color" content="#F97316" />
+  <meta name="theme-color" content="#0C1220" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com; connect-src 'self' https://*.tile.openstreetmap.org; worker-src 'self'; media-src 'self';" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -24,7 +24,12 @@
 
   <header class="app-header">
     <div class="brand">
-      <span class="brand-pin" aria-hidden="true">📍</span>
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="2.5"/>
+        </svg>
+      </span>
       <h1>PinRide</h1>
     </div>
     <span class="role-tag">Driver</span>
@@ -33,10 +38,28 @@
   <main class="driver-main" id="main-content">
     <div id="scan-stage" class="scan-stage">
       <p class="driver-lede">Scan the passenger's QR code to open their exact destination.</p>
-      <button id="scan-btn" class="primary-btn big-btn" type="button">📷 Scan Passenger QR</button>
+
+      <button id="scan-btn" class="primary-btn big-btn" type="button">
+        <!-- Camera icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        Scan Passenger QR
+      </button>
+
       <div id="reader" class="reader" hidden></div>
-      <button id="torch-btn" class="secondary-btn" type="button" hidden>🔦 Torch</button>
+
+      <button id="torch-btn" class="secondary-btn" type="button" hidden>
+        <!-- Flashlight icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Torch
+      </button>
+
       <button id="cancel-scan" class="secondary-btn" type="button" hidden>Cancel</button>
+
       <div id="typed-code-row" class="typed-code-row">
         <button id="show-typed-btn" class="text-btn" type="button">Can't scan? Type the code instead →</button>
         <div id="typed-code-input-wrap" class="typed-code-input-wrap" hidden>
@@ -47,6 +70,7 @@
         </div>
         <p id="typed-code-error" class="typed-code-error" hidden aria-live="polite" aria-atomic="true"></p>
       </div>
+
       <p id="scan-error" class="scan-error" hidden aria-live="assertive" aria-atomic="true"></p>
     </div>
 
@@ -55,15 +79,36 @@
       <h2 id="dest-name" class="dest-name">—</h2>
       <p id="dest-coords" class="coords">—</p>
       <div id="preview-map" class="preview-map"></div>
-      <a id="gmaps-btn" class="primary-btn big-btn" target="_blank" rel="noopener noreferrer">🗺️ Open in Google Maps</a>
-      <a id="waze-btn" class="secondary-btn big-btn" target="_blank" rel="noopener noreferrer">🚗 Open in Waze</a>
+
+      <a id="gmaps-btn" class="primary-btn big-btn" target="_blank" rel="noopener noreferrer">
+        <!-- Map icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+          <line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/>
+        </svg>
+        Open in Google Maps
+      </a>
+
+      <a id="waze-btn" class="secondary-btn big-btn" target="_blank" rel="noopener noreferrer">
+        <!-- Navigation icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+        </svg>
+        Open in Waze
+      </a>
+
       <button id="scan-again" class="text-btn" type="button">Scan another</button>
     </div>
   </main>
 
   <footer class="app-footer">
-    <a href="index.html" class="role-link">← I am a Passenger</a>
-    <p class="tagline">PinRide — Share your taxi destination with a QR code. Built in Cebu City.</p>
+    <a href="index.html" class="role-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+        <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+      </svg>
+      I'm a Passenger
+    </a>
+    <p class="tagline">Built in Cebu City</p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
